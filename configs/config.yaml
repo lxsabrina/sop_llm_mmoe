@@ -1,0 +1,101 @@
+# 模型路径配置
+models:
+  foundation:
+    path: "./models/foundation"  # 请将Qwen3-8B foundation model放到此目录
+    type: "qwen"
+  sft:
+    path: "./models/sft"  # 请将SFT model放到此目录
+    type: "qwen"
+
+# 数据配置
+data:
+  train_file: "./data/train/train.jsonl"  # 格式: {"input": "...", "output": "..."}
+  eval_file: "./data/eval/eval.jsonl"
+  max_samples: null  # null表示使用全部数据
+
+# 推理配置
+inference:
+  max_length: 2048
+  temperature: 0.7
+  top_p: 0.9
+  do_sample: true
+  batch_size: 4
+
+# Step 1: Ensemble配置
+ensemble:
+  strategy: "weighted"  # weighted, avg, router
+  foundation_weight: 0.5
+  sft_weight: 0.5
+
+# Step 2: BTM配置
+btm:
+  checkpoint_dir: "./models/checkpoints/btm"
+  router_hidden_dim: 512
+  num_layers: 32  # Qwen3-8B层数
+  learning_rate: 1e-4
+  num_epochs: 3
+  batch_size: 2
+  gradient_accumulation_steps: 8
+  warmup_steps: 100
+  save_steps: 500
+  eval_steps: 500
+  logging_steps: 10
+
+  # Loss权重
+  load_balance_weight: 0.01
+  sparsity_weight: 0.001
+
+  # Router配置
+  router_type: "token_level"  # token_level, layer_level, hybrid
+  gate_activation: "softmax"  # softmax, sigmoid, sparsemax
+
+# Step 3: Distillation配置
+distill:
+  checkpoint_dir: "./models/checkpoints/distill"
+  student_init: "foundation"  # foundation, sft, random
+  teacher_mode: "btm"  # ensemble, btm
+
+  # 训练参数
+  learning_rate: 5e-6
+  num_epochs: 2
+  batch_size: 2
+  gradient_accumulation_steps: 8
+  warmup_ratio: 0.1
+  save_steps: 1000
+  eval_steps: 1000
+
+  # 蒸馏参数
+  temperature: 2.0
+  distill_loss_weight: 0.7
+  task_loss_weight: 0.3
+
+  # LlamaFactory集成
+  use_llamafactory: true
+  llamafactory_config: "./configs/llamafactory_distill.yaml"
+
+# 评估配置
+evaluation:
+  metrics:
+    - "accuracy"
+    - "perplexity"
+    - "bleu"
+    - "rouge"
+  eval_batch_size: 4
+
+  # 测试类别
+  test_categories:
+    - name: "sop_strict"
+      file: "./data/eval/sop_strict.jsonl"
+      description: "严格SOP遵循测试"
+    - name: "reasoning"
+      file: "./data/eval/reasoning.jsonl"
+      description: "推理泛化能力测试"
+    - name: "mixed"
+      file: "./data/eval/mixed.jsonl"
+      description: "混合场景测试"
+
+# 日志配置
+logging:
+  level: "INFO"
+  log_dir: "./logs"
+  tensorboard_dir: "./outputs/tensorboard"

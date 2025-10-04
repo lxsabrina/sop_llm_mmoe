@@ -1,0 +1,76 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# 虚拟环境
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# 模型文件 (太大，不提交)
+models/foundation/
+models/sft/
+models/checkpoints/
+*.bin
+*.safetensors
+*.gguf
+*.pth
+*.pt
+
+# 数据文件 (可能包含敏感信息)
+data/train/*.jsonl
+data/eval/*.jsonl
+!data/train/.gitkeep
+!data/eval/.gitkeep
+
+# 输出和日志
+outputs/
+logs/
+*.log
+
+# TensorBoard
+runs/
+tensorboard/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# 临时文件
+*.tmp
+*.cache
+
+# 环境变量
+.env
+.env.local
+
+# PyTorch
+*.pt
+*.pth
+checkpoint-*/
