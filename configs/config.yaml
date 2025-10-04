@@ -48,6 +48,28 @@ btm:
   # Router配置
   router_type: "token_level"  # token_level, layer_level, hybrid
   gate_activation: "softmax"  # softmax, sigmoid, sparsemax
+  hidden_dim: 4096  # Qwen3-8B hidden dimension
+
+# Hybrid Routing配置 (Sub-agent模式)
+hybrid:
+  # 分类器配置
+  classifier:
+    type: "rule_based"  # rule_based, learned
+    encoder_model: "Qwen/Qwen2.5-0.5B"
+    checkpoint_dir: "./models/checkpoints/classifier"
+    num_epochs: 5
+    batch_size: 16
+    learning_rate: 2e-5
+
+  # 路由策略
+  routing:
+    confidence_threshold: 0.85
+    enable_btm_fallback: true
+
+  # 数据
+  classifier_data:
+    train_file: "./data/classifier/train.jsonl"
+    val_file: "./data/classifier/val.jsonl"
 
 # Step 3: Distillation配置
 distill:
